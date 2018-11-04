@@ -5,10 +5,10 @@ University of Bamberg, Ubiquitous Computing Assignment #1: Android sensor / actu
 
 2. compile AndroidTest.java via the following command with classpath referencing SensorUDPReceiver.jar:
 
-        javac -cp .:SensorUDPReceiver.jar AndroidTest.java
+        javac -cp lib:SensorUDPReceiver.jar src/de/cmlab/ubicomp/AndroidTest.java
 
 3. run SerialTest by executing the following command:
 
-        java -cp .:SensorUDPReceiver.jar AndroidTest
+        java -cp lib:SensorUDPReceiver.jar bin/de/cmlab/ubicomp/AndroidTest
 
 4. check your console output
