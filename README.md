@@ -1,4 +1,4 @@
-# AndroidTest
+# Smartphone Sensors – Android
 University of Bamberg, Ubiquitous Computing Assignment #1: Android sensor / actuator
 
 1. cd into AndroidTest Folder
