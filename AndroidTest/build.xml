@@ -6,123 +6,72 @@
 <!-- Build file for the UbiComp assignment: #1 Android sensor / actuator -->
 <!-- ************************************************************ -->
 
-<project name="AndroidTest" default="compile" basedir=".">
-	<description>
-		Build file for the
-		Ubiquitous Computing Assignment #1: Android sensor / actuator
-		Team members: Mastoras Georgios, Name2, Name3, Name4
-	</description>
+<project name="AndroidTest" default="main" basedir=".">
 
-	<!-- Compiler options -->
+    <!-- JDK definitions -->
 
-	<property name="compiler.debug" value="on"/>
-	<property name="compiler.generate.no.warnings" value="off"/>
-	<property name="compiler.args" value=""/>
-	<property name="compiler.max.memory" value="700m"/>
-	<patternset id="ignored.files">
-		<exclude name="**/*.hprof/**"/>
-		<exclude name="**/*.pyc/**"/>
-		<exclude name="**/*.pyo/**"/>
-		<exclude name="**/*.rbc/**"/>
-		<exclude name="**/*.yarb/**"/>
-		<exclude name="**/*~/**"/>
-		<exclude name="**/.DS_Store/**"/>
-		<exclude name="**/.git/**"/>
-		<exclude name="**/.hg/**"/>
-		<exclude name="**/.svn/**"/>
-		<exclude name="**/CVS/**"/>
-		<exclude name="**/__pycache__/**"/>
-		<exclude name="**/_svn/**"/>
-		<exclude name="**/vssver.scc/**"/>
-		<exclude name="**/vssver2.scc/**"/>
-	</patternset>
-	<patternset id="library.patterns">
-		<include name="*.jar"/>
-	</patternset>
-	<patternset id="compiler.resources">
-		<exclude name="**/?*.java"/>
-		<exclude name="**/?*.class"/>
-	</patternset>
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
 
-	<!-- JDK definitions -->
+    <!-- OTHER definitions -->
 
-	<property environment="env"/>
-	<property name="debuglevel" value="source,lines,vars"/>
-	<property name="target" value="1.8"/>
-	<property name="source" value="1.8"/>
+    <property name="src.dir"     value="src"/>
 
-	<!-- OTHER definitions -->
+    <property name="build.dir"   value="bin"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="doc"         location="./doc"/>
 
-	<property name="src" value="./src"/>
-	<property name="build" value="./build"/>
-	<property name="dist" location="./dist"/>
-	<property name="lib" location="./lib"/>
-	<property name="doc" location="./doc"/>
-	<property name="src.files" value="AndroidTest.java"/>
+    <property name="main-class"  value="de.cmlab.ubicomp.AndroidTest"/>
 
-	<!-- Project Libraries -->
+    <!-- Project Libraries -->
 
-	<path id="library.sensorudpreceiver.classpath">
-		<pathelement location="${lib}/SensorUDPReceiver.jar"/>
-	</path>
+    <property name="lib.dir"     value="lib"/>
 
-	<!-- Compiler tasks -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
 
-	<target name="prepare">
-		<tstamp/>
-		<mkdir dir="${build}"/>
-        <mkdir dir="${build}/lib"/>
-	</target>
+    <!-- Compiler tasks -->
 
-	<target name="compile" depends="prepare">
-		<javac srcdir="${src}" destdir="${build}" includes="${src.files}">
-			<classpath>
-				<pathelement path="${lib}"/>
-			</classpath>
-		</javac>
-	</target>
+    <target name="prepare">
+        <tstamp/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${jar.dir}"/>
+        <mkdir dir="${doc}"/>
+    </target>
 
-	<target name="run" depends="compile">
-		<java classname="de.cmlab.ubicomp.AndroidTest">
-			<classpath>
-				<pathelement path="${build}"/>
-			</classpath>
-		</java>
-	</target>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${doc}"/>
+    </target>
 
-	<target name="dist" depends="compile">
-		<jar destfile="${dist}/AndroidTest.jar" basedir="${build}">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Main-Class" value="AndroidTest" />
-			</manifest>
-		</jar>
-	</target>
-	
-	
-	<target name="clean" description="clean up">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-	</target>
+    <target name="compile" depends="prepare">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+    </target>
 
-	<target name="javadoc">
-		<javadoc
-			destdir="${doc}"
-			access="public"
-			source="1.7"
-			use="true"
-			notree="false"
-			nonavbar="false"
-			noindex="false"
-			splitindex="true"
-			author="true"
-			version="true"
-			packagenames="de.cmlab.ubicomp"
-			sourcepath="src">
-			<link href="http://docs.oracle.com/javase/8/docs/api/"/>
-		</javadoc>
-	</target>
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
 
-	<target name="all" depends="clean,prepare,compile,run"/>
+    <target name="run" depends="jar">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+    <target name="main" depends="clean,run"/>
 
 </project>
